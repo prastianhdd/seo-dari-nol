@@ -1,0 +1,128 @@
+## Masalah nyata
+
+Bayangkan kamu mencari “cara mempercepat website” karena halamanmu terasa lambat. Artikel pertama menjelaskan pentingnya kecepatan, tetapi setelah membacanya kamu masih belum tahu apa yang perlu diperiksa. Kamu pun kembali ke hasil pencarian.
+
+Di bab ini, kamu akan belajar mengenali kebutuhan di balik kata yang diketik pembaca dan menyusun konten yang membantu mereka menyelesaikan tugasnya.
+
+## Tujuan belajar
+
+Setelah bab ini, kamu dapat:
+
+- menebak maksud awal dari tugas yang ingin diselesaikan pembaca;
+- merancang konten people-first dengan bukti dan langkah yang dapat dicoba;
+- menghindari target panjang kata dan keyword density buatan;
+- mengevaluasi apakah pembaca dapat menyelesaikan tugas tanpa kembali mencari panduan lain.
+
+## Konsep inti
+
+### Mulai dari tugas, bukan frasa
+
+Kueri “cache browser” bisa berarti definisi, cara membersihkan cache, atau diagnosis aset lama. Satu halaman tidak harus memaksa semua kemungkinan masuk. Tentukan audiens, situasi awal, dan hasil akhir yang spesifik.
+
+SEO membantu mesin pencari menemukan serta memahami konten. SEO tidak menggantikan isi yang berguna. Google menyarankan fokus pada audiens nyata, tujuan utama situs, pengalaman langsung, akurasi, dan nilai asli. Tidak ada jumlah kata pilihan dari Google dan tidak ada kepadatan kata kunci yang harus dikejar.
+
+### Tunjukkan pengalaman yang relevan
+
+Untuk dokumentasi developer, bukti dapat berupa kode yang berjalan, hasil terminal, batasan implementasi, tangkapan pengujian, atau penjelasan mengapa satu pilihan gagal. Jangan mengarang pengalaman atau hasil pengujian.
+
+### Kepercayaan lebih penting daripada kesan ahli
+
+Cantumkan sumber untuk klaim yang perlu diperiksa. Bedakan hasil nyata dari simulasi. Perbarui tanggal hanya ketika isi berubah secara substansial. E-E-A-T bukan satu faktor peringkat tunggal; pengalaman, keahlian, dan otoritas membantu membangun kepercayaan.
+
+## Praktik langkah demi langkah
+
+Gunakan brief kecil sebelum menulis. File `brief-konten.md`:
+
+```md
+# Brief: mendiagnosis cache browser
+
+Audiens: developer pemula yang melihat CSS lama setelah deploy.
+Masalah: browser atau CDN masih menyajikan aset lama.
+Hasil akhir: pembaca dapat menemukan lapisan cache dan memverifikasi perbaikan.
+
+Wajib ada:
+- perbedaan cache browser dan CDN;
+- contoh header Cache-Control;
+- pemeriksaan lewat DevTools Network;
+- hasil yang diharapkan;
+- risiko hard reload sebagai diagnosis sementara, bukan solusi deploy.
+
+Tidak dibahas:
+- konfigurasi mendalam setiap vendor CDN;
+- sejarah HTTP caching.
+```
+
+Kemudian ubah brief menjadi alur tugas:
+
+1. Tunjukkan gejala yang dikenali pembaca.
+2. Jelaskan model mental minimum.
+3. Berikan langkah yang dapat disalin.
+4. Tampilkan hasil yang diharapkan.
+5. Berikan cabang diagnosis saat hasil berbeda.
+6. Tautkan materi lanjutan yang relevan.
+
+Contoh bagian praktis pada halaman:
+
+```html
+<h1>CSS lama masih tampil setelah deploy</h1>
+<p>Periksa dahulu apakah respons berasal dari cache browser atau CDN.</p>
+
+<h2>Periksa respons CSS</h2>
+<ol>
+  <li>Buka DevTools, lalu pilih panel Network.</li>
+  <li>Muat ulang halaman dan pilih berkas CSS.</li>
+  <li>Catat status, header Cache-Control, Age, dan sumber respons.</li>
+</ol>
+
+<p>Hasil yang diharapkan: kamu dapat menyebut lapisan yang menyajikan aset lama.</p>
+```
+
+Judul tersebut menjelaskan masalah. Isi langsung menuju tindakan. Frasa target tidak perlu diulang pada setiap paragraf.
+
+## Verifikasi dan hasil yang diharapkan
+
+Minta seseorang yang sesuai audiens mencoba halaman tanpa arahan tambahan. Catat:
+
+- apakah mereka memahami prasyarat;
+- bagian tempat mereka berhenti;
+- apakah kode dapat disalin dan dijalankan;
+- apakah hasil aktual cocok dengan hasil yang dijelaskan;
+- pertanyaan lanjutan yang belum terjawab.
+
+Lakukan pemeriksaan mandiri:
+
+| Pertanyaan | Bukti yang dicari |
+|---|---|
+| Apakah halaman menyelesaikan kebutuhan? | Tugas dan hasil akhir eksplisit |
+| Apakah ada nilai asli? | Demo, pengujian, analisis, atau pengalaman nyata |
+| Apakah klaim dapat dipercaya? | Sumber, batasan, dan label simulasi |
+| Apakah judul akurat? | Judul sesuai isi, tanpa sensasi |
+| Apakah contoh aman dan benar? | Kode diuji dan kegagalan ditangani |
+
+Hasil yang diharapkan adalah pembaca mampu menyelesaikan tugas atau mengetahui langkah diagnosis berikutnya. Bukan skor kata, jumlah heading, atau kepastian peringkat.
+
+## Kesalahan umum
+
+- Menulis untuk “algoritme” tanpa audiens nyata.
+- Menetapkan jumlah kata minimum meski tugas sudah selesai dijelaskan.
+- Mengulang kata kunci hingga bahasa terasa tidak alami.
+- Merangkum halaman lain tanpa analisis atau pengalaman tambahan.
+- Mengubah tanggal agar terlihat baru tanpa perubahan substansial.
+- Mengklaim kode diuji padahal belum pernah dijalankan.
+- Membahas banyak topik yang tidak terkait hanya karena sedang populer.
+
+## Latihan
+
+Perbaiki rencana artikel berikut: “Tulis 2.500 kata tentang robots.txt, ulangi ‘robots.txt SEO’ 30 kali, lalu tambahkan definisi dari lima situs.”
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Tentukan audiens dan tugas, misalnya developer pemula yang ingin mengizinkan CSS tetapi memblokir area hasil pencarian internal. Buat contoh `robots.txt`, jelaskan bahwa aturan mengendalikan crawling—not pengindeksan—lalu tunjukkan pengujian dan hasilnya. Gunakan sumber resmi. Panjang mengikuti kebutuhan penjelasan; jangan menetapkan pengulangan frasa.
+
+</details>
+
+## Rujukan
+
+- [Membuat konten yang bermanfaat, andal, dan mengutamakan pengguna](https://developers.google.com/search/docs/fundamentals/creating-helpful-content?hl=id)
+- [Panduan memulai SEO](https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=id)

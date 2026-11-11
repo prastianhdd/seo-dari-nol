@@ -1,0 +1,91 @@
+## Masalah nyata
+
+Bayangkan sebuah halaman mendapat skor Lighthouse desktop 100. Namun, saat dibuka lewat HP, gambar utamanya lambat muncul dan tombol bergeser tepat sebelum ditekan.
+
+Di bab ini, kamu akan belajar memakai LCP, INP, dan CLS untuk memahami masalah seperti itu. Kamu juga akan membedakan hasil pengujian lab dari pengalaman pengguna yang terekam di lapangan.
+
+## Tujuan belajar
+
+Kamu akan membedakan LCP, INP, CLS, data lab dan lapangan, memakai persentil ke-75, serta memprioritaskan perbaikan tanpa menjanjikan ranking.
+
+## Konsep inti
+
+LCP mengukur kapan konten terbesar terlihat; nilai baik ≤2,5 detik. INP mengukur responsivitas interaksi; nilai baik ≤200 milidetik. CLS mengukur kestabilan visual; nilai baik ≤0,1.
+
+Penilaian lapangan menggunakan persentil ke-75: setidaknya 75% kunjungan harus memenuhi ambang baik. Data lapangan berasal dari pengguna nyata dan dipengaruhi perangkat serta jaringan. Data lab membantu reproduksi dan debugging, tetapi tidak menggantikan data lapangan.
+
+Core Web Vitals adalah bagian pengalaman halaman dan selaras dengan sistem ranking inti, bukan faktor tunggal atau jaminan kenaikan posisi. Konten relevan tetap mendasar.
+
+## Praktik langkah demi langkah
+
+Catat baseline di `cwv-baseline.md`:
+
+```md
+# Simulasi baseline halaman bab
+Sumber lapangan: belum tersedia
+Lighthouse mobile:
+- LCP: 3,1 detik
+- INP: tidak tersedia tanpa interaksi nyata
+- CLS: 0,18
+
+Hipotesis:
+- Hero terlalu besar
+- Gambar tidak memiliki dimensi
+- Script navigasi memblokir main thread
+```
+
+Perbaiki LCP dengan mengoptimalkan resource hero, menghindari lazy loading pada gambar utama, dan mengurangi render-blocking yang tidak perlu. Perbaiki INP dengan memecah pekerjaan panjang dan meminimalkan JavaScript. Perbaiki CLS dengan `width`/`height` atau aspect ratio serta ruang stabil untuk konten dinamis.
+
+Contoh gambar stabil:
+
+```html
+<img
+  src="/illustrations/hero.svg"
+  width="640"
+  height="520"
+  alt="Ilustrasi halaman web dan kaca pembesar"
+>
+```
+
+Contoh pekerjaan interaksi yang dipecah:
+
+```js
+button.addEventListener("click", async () => {
+  showImmediateFeedback();
+  await new Promise(requestAnimationFrame);
+  renderLargeResult();
+});
+```
+
+## Verifikasi dan hasil yang diharapkan
+
+Gunakan Lighthouse atau DevTools untuk diagnosis lab. Gunakan PageSpeed Insights, Chrome UX Report, atau laporan Core Web Vitals Search Console untuk data lapangan jika tersedia. Uji beberapa perangkat dan koneksi.
+
+Hasil yang diharapkan: penyebab terukur, perbaikan yang dapat diuji, serta data sesudah perubahan. Jangan menyatakan skor lab sebagai pengalaman semua pengguna atau janji ranking.
+
+## Kesalahan umum
+
+- Hanya menguji desktop cepat.
+- Menyamakan skor Lighthouse dengan CWV lapangan.
+- Memperbaiki satu metrik sambil merusak aksesibilitas.
+- Lazy-load gambar LCP.
+- Tidak memberi dimensi gambar.
+- Menganggap CWV satu-satunya faktor ranking.
+- Mengoptimalkan angka tanpa memperbaiki tugas pengguna.
+
+## Latihan
+
+Hero memiliki CLS 0,22 karena dimensi gambar tidak diketahui. Tombol menu memproses daftar besar selama 600 ms. Tentukan perbaikan pertama.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Tetapkan dimensi/aspect ratio hero untuk menyediakan ruang. Untuk menu, kurangi pekerjaan, render hanya data yang diperlukan, atau pecah pekerjaan panjang setelah memberi feedback langsung. Ukur ulang pada perangkat lambat.
+
+</details>
+
+## Rujukan
+
+- [Core Web Vitals dan hasil Google](https://developers.google.com/search/docs/appearance/core-web-vitals?hl=id)
+- [Web Vitals](https://web.dev/articles/vitals)
+- [Penetapan ambang Core Web Vitals](https://web.dev/articles/defining-core-web-vitals-thresholds)

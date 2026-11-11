@@ -1,0 +1,79 @@
+## Masalah nyata
+
+Bayangkan laporan Search Console menunjukkan klik turun 20%. Apakah halaman lebih jarang terlihat, atau jumlah orang yang mengeklik turun meski halaman tetap sering muncul? Angka klik saja belum cukup untuk menjawabnya.
+
+Di bab ini, kamu akan belajar membaca klik, impresi, dan CTR bersama-sama, lalu memecah data berdasarkan halaman atau perangkat sebelum memutuskan apa yang perlu diubah.
+
+## Tujuan belajar
+
+Kamu akan menghitung CTR, membedakan klik, impresi, posisi, memakai segmentasi, dan menyusun hipotesis tanpa menganggap korelasi sebagai sebab.
+
+## Konsep inti
+
+Klik adalah kunjungan melalui hasil Search. Impresi mencatat kemunculan hasil berdasarkan aturan laporan. CTR adalah klik dibagi impresi. Posisi adalah rata-rata posisi hasil tertinggi situs dan bukan ranking tetap yang dapat direplikasi semua pengguna.
+
+Data dapat dikelompokkan berdasarkan kueri, halaman, negara, perangkat, tampilan Search, dan tanggal. Personalisasi, lokasi, waktu, privasi kueri, serta metode agregasi membuat total tabel dan diagram dapat berbeda.
+
+## Praktik langkah demi langkah
+
+Data berikut adalah **simulasi**, bukan ekspor properti nyata:
+
+```csv
+periode,halaman,impresi,klik
+sebelum,/panduan/sitemap/,10000,600
+sesudah,/panduan/sitemap/,12000,540
+```
+
+Hitung CTR:
+
+```js
+const sebelum = (600 / 10000) * 100;
+const sesudah = (540 / 12000) * 100;
+console.log({ sebelum, sesudah });
+// { sebelum: 6, sesudah: 4.5 }
+```
+
+Impresi naik, klik turun, dan CTR turun. Itu memunculkan pertanyaan—bukan langsung membuktikan title buruk. Segmentasikan kueri, perangkat, negara, serta tampilan Search. Periksa apakah kueri baru yang kurang relevan menambah impresi.
+
+Template `analisis-performa.md`:
+
+```md
+# Simulasi analisis
+Periode: 28 hari sebelum vs 28 hari sesudah
+Segmen: Web, Indonesia, mobile
+Perubahan: impresi +20%, klik -10%, CTR 6% menjadi 4,5%
+Hipotesis: campuran kueri berubah atau tampilan hasil berubah
+Pemeriksaan: kueri, perangkat, title/snippet aktual, seasonality
+Tindakan: ubah hanya jika bukti halaman tidak menjawab maksud
+```
+
+## Verifikasi dan hasil yang diharapkan
+
+Bandingkan periode sepadan dan tahun-ke-tahun bila musiman. Pisahkan jenis Search. Temukan halaman yang kehilangan klik terbesar, lalu kueri yang berubah. Catat anotasi deploy.
+
+Hasil yang diharapkan adalah hipotesis terukur dengan baseline, segmen, tindakan kecil, dan waktu evaluasi. Jangan menjanjikan kenaikan CTR setelah perubahan metadata.
+
+## Kesalahan umum
+
+- Membaca CTR tanpa impresi dan maksud kueri.
+- Membandingkan periode dengan panjang berbeda.
+- Menganggap posisi rata-rata sebagai ranking universal.
+- Mengabaikan data terbaru yang masih sementara.
+- Mengubah banyak halaman sekaligus.
+- Menampilkan angka simulasi tanpa label.
+
+## Latihan
+
+**Simulasi:** impresi 8.000 menjadi 10.000; klik 400 menjadi 450. Hitung CTR dan jelaskan perubahan.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+CTR awal 5%; CTR baru 4,5%. Klik dan impresi naik, tetapi proporsi klik turun. Segmentasi diperlukan sebelum menyimpulkan penyebab.
+
+</details>
+
+## Rujukan
+
+- [Laporan performa Search Console](https://support.google.com/webmasters/answer/7576553?hl=id)
+- [Menganalisis penurunan trafik](https://developers.google.com/search/docs/monitor-debug/debugging-search-traffic-drops?hl=id)

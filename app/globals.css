@@ -1,0 +1,366 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f8fc;
+  --surface: #ffffff;
+  --foreground: #111827;
+  --muted: #475569;
+  --accent: #1d4ed8;
+  --note: #eaf1ff;
+  --line: #dce4f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", sans-serif;
+  line-height: 1.7;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "DM Serif Text", serif;
+  font-weight: 400;
+  line-height: 1.08;
+}
+
+h1 {
+  margin: 0;
+  max-width: 12ch;
+  font-size: clamp(3.5rem, 10vw, 7rem);
+  letter-spacing: -0.035em;
+}
+
+code,
+pre {
+  font-family: "IBM Plex Mono", monospace;
+}
+
+:not(pre) > code {
+  overflow-wrap: anywhere;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.prose-seo {
+  max-width: 72ch;
+  font-size: 1.075rem;
+}
+
+.prose-seo .lead {
+  margin: 1.25rem 0 3rem;
+  color: var(--muted);
+  font-size: 1.2rem;
+}
+
+.prose-seo h2 {
+  margin: 3.5rem 0 1rem;
+  scroll-margin-top: 2rem;
+  font-size: 2rem;
+}
+
+.prose-seo h3 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.45rem;
+}
+
+.prose-seo p,
+.prose-seo ul,
+.prose-seo ol,
+.prose-seo table,
+.prose-seo pre,
+.prose-seo details {
+  margin-block: 1rem;
+}
+
+.prose-seo ul,
+.prose-seo ol {
+  padding-left: 1.5rem;
+}
+
+.prose-seo a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.prose-seo pre {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.prose-seo table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.prose-seo th,
+.prose-seo td {
+  border: 1px solid var(--line);
+  padding: 0.65rem;
+  text-align: left;
+}
+
+.prose-seo details {
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--note);
+  padding: 1rem;
+}
+
+.prose-seo summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  .shiki,
+  .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 0.75rem;
+  left: 0.75rem;
+  transform: translateY(-160%);
+  border-radius: 0.5rem;
+  background: var(--foreground);
+  color: white;
+  padding: 0.65rem 1rem;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.hero-grid {
+  display: grid;
+  align-items: center;
+  gap: 3rem;
+}
+
+.chapter-shell {
+  display: grid;
+  width: min(100%, 94rem);
+  margin-inline: auto;
+  gap: 3rem;
+}
+
+.chapter-main {
+  min-width: 0;
+}
+
+.chapter-sidebar,
+.chapter-toc {
+  display: none;
+}
+
+.chapter-list h2,
+.toc h2 {
+  margin: 0 0 0.75rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chapter-list section + section {
+  margin-top: 1.75rem;
+}
+
+.chapter-list ol,
+.toc ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chapter-list li,
+.toc li {
+  margin: 0.45rem 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.chapter-list a,
+.toc a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.chapter-list a[aria-current="page"] {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.code-frame {
+  position: relative;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  margin-block: 1rem;
+}
+
+.code-frame pre {
+  margin: 0;
+  padding-top: 3rem;
+}
+
+.code-copy {
+  position: absolute;
+  z-index: 1;
+  top: 0.65rem;
+  right: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: var(--surface);
+  color: var(--foreground);
+  padding: 0.3rem 0.65rem;
+  font: 600 0.75rem "Inter", sans-serif;
+  cursor: pointer;
+}
+
+.drawer-trigger {
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  padding: 0.6rem 0.9rem;
+  font-weight: 600;
+}
+
+.mobile-chapter-menu dialog {
+  width: min(90vw, 26rem);
+  max-height: 88vh;
+  margin: 0 0 0 auto;
+  border: 0;
+  padding: 1.25rem;
+  overflow-y: auto;
+}
+
+.mobile-chapter-menu dialog::backdrop {
+  background: rgb(15 23 42 / 55%);
+}
+
+.drawer-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.drawer-heading h2 {
+  font-size: 1.6rem;
+}
+
+.drawer-heading button {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+body.drawer-open {
+  overflow: hidden;
+}
+
+.technical-figure {
+  margin-block: 2rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface);
+}
+
+.technical-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.technical-figure figcaption,
+.technical-figure .figure-text {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.technical-figure .figure-text {
+  border-top: 1px solid var(--line);
+  background: var(--note);
+}
+
+@media (min-width: 48rem) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.85fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .chapter-shell {
+    grid-template-columns: 14rem minmax(0, 45rem);
+  }
+
+  .chapter-sidebar {
+    display: block;
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+
+  .mobile-chapter-menu {
+    display: none;
+  }
+}
+
+@media (min-width: 80rem) {
+  .chapter-shell {
+    grid-template-columns: 15rem minmax(0, 45rem) 12rem;
+  }
+
+  .chapter-toc {
+    display: block;
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -1,0 +1,146 @@
+## Masalah nyata
+
+Bayangkan seseorang mengirim dua tautan, `/page?id=8472` dan `/panduan/cache-browser/`. Dari tautan kedua, kamu sudah bisa menebak isinya. Setelah halaman dibuka, judul dan bagian yang tertata juga membantumu menemukan penjelasan yang dicari.
+
+Di bab ini, kamu akan belajar membuat URL yang mudah dipahami dan menyusun struktur halaman dengan heading, elemen HTML semantik, dan tautan yang bisa dirayapi.
+
+## Tujuan belajar
+
+Setelah bab ini, kamu dapat:
+
+- membuat URL deskriptif, stabil, dan konsisten;
+- memakai tanda hubung sebagai pemisah kata;
+- membedakan path, query parameter, dan fragment;
+- menyusun landmark serta heading berdasarkan struktur dokumen;
+- membuat tautan internal berupa elemen `<a href>` yang dapat dirayapi.
+
+## Konsep inti
+
+### URL adalah alamat, bukan tempat menaruh semua metadata
+
+Gunakan path yang menggambarkan sumber daya: `/panduan/cache-browser/`. Query cocok untuk variasi seperti filter atau sortir: `/produk?warna=biru`. Fragment menunjuk bagian pada dokumen yang sama: `/panduan/cache-browser/#verifikasi`.
+
+Google merekomendasikan kata deskriptif dan tanda hubung. Hindari ID sesi, parameter pelacakan yang menciptakan banyak variasi, serta kombinasi filter tak terbatas. URL peka huruf besar-kecil; pilih satu bentuk dan konsisten.
+
+Fragment `#` tidak boleh dipakai sebagai mekanisme untuk mengganti seluruh isi halaman. Server tidak menerima fragment dalam permintaan HTTP. Aplikasi JavaScript yang membutuhkan URL berbeda sebaiknya memakai URL nyata dan History API.
+
+### HTML semantik mengungkap struktur
+
+`<header>`, `<nav>`, `<main>`, `<article>`, dan `<footer>` menjelaskan peran area. Heading membentuk hierarki isi. Gunakan satu judul utama yang jelas untuk halaman, lalu H2 untuk bagian utama dan H3 untuk subbagian. Jangan memilih level heading berdasarkan ukuran visual; CSS menangani ukuran.
+
+## Praktik langkah demi langkah
+
+Mulai dengan pemetaan URL:
+
+```text
+Buruk: /page?id=8472
+Baik:  /panduan/cache-browser/
+
+Buruk: /Panduan_Cache_Browser
+Baik:  /panduan/cache-browser/
+
+Filter: /artikel?topik=http&urut=terbaru
+Bagian: /panduan/cache-browser/#verifikasi
+```
+
+Buat dokumen semantik. File `panduan-cache.html`:
+
+```html
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Memahami Cache Browser | Proyek Web</title>
+  </head>
+  <body>
+    <header>
+      <a href="/">Proyek Web</a>
+      <nav aria-label="Navigasi utama">
+        <a href="/panduan/">Panduan</a>
+        <a href="/referensi/">Referensi</a>
+      </nav>
+    </header>
+
+    <main>
+      <article>
+        <h1>Memahami cache browser</h1>
+        <p>Pelajari kapan browser menyimpan respons dan cara memeriksanya.</p>
+
+        <h2 id="cara-kerja">Cara kerja cache</h2>
+        <p>Browser mengevaluasi header respons sebelum memakai salinan.</p>
+
+        <h2 id="verifikasi">Verifikasi</h2>
+        <h3>Periksa panel Network</h3>
+        <p>Bandingkan respons awal dan pemuatan berikutnya.</p>
+      </article>
+    </main>
+
+    <footer>
+      <a href="/panduan/header-http/">Panduan header HTTP</a>
+    </footer>
+  </body>
+</html>
+```
+
+Pada Next.js App Router, folder rute menghasilkan path. Contoh `app/panduan/cache-browser/page.tsx`:
+
+```tsx
+export default function Page() {
+  return (
+    <main>
+      <article>
+        <h1>Memahami cache browser</h1>
+        <h2 id="cara-kerja">Cara kerja cache</h2>
+        <p>Browser mengevaluasi header respons sebelum memakai salinan.</p>
+      </article>
+    </main>
+  );
+}
+```
+
+Gunakan tautan nyata, bukan klik pada elemen generik:
+
+```html
+<a href="/panduan/cache-browser/">Pelajari cache browser</a>
+```
+
+Anchor text menjelaskan tujuan. “Pelajari cache browser” lebih informatif daripada “klik di sini”.
+
+## Verifikasi dan hasil yang diharapkan
+
+1. Buka URL dan pastikan satu bentuk kanonis dipakai di navigasi, sitemap, serta canonical.
+2. Periksa View Source. Landmark, H1, H2, teks, dan tautan harus tersedia dalam HTML awal.
+3. Nonaktifkan CSS. Urutan isi tetap logis.
+4. Navigasikan dengan keyboard. Tautan menerima fokus dan Enter membukanya.
+5. Salin URL dengan fragment seperti `#verifikasi`. Browser berpindah ke heading terkait.
+6. Cari variasi huruf besar, underscore, dan parameter lama. Redirect-kan hanya jika URL tersebut benar-benar pernah digunakan.
+
+Hasil yang diharapkan: URL dapat dipahami tanpa membuka halaman, satu alamat konsisten digunakan, dan struktur dokumen tetap terbaca tanpa gaya visual.
+
+## Kesalahan umum
+
+- Mengganti spasi dengan underscore, bukan tanda hubung.
+- Memasukkan ID sesi atau parameter pelacakan ke tautan internal.
+- Menggunakan fragment untuk menampilkan halaman yang sepenuhnya berbeda.
+- Melompati level heading demi ukuran font.
+- Membuat semua elemen sebagai `<div>`.
+- Membuat navigasi dengan `onclick` tanpa `<a href>`.
+- Mengubah URL yang sudah stabil hanya agar terlihat lebih pendek, tanpa manfaat nyata.
+
+## Latihan
+
+Rancang URL dan heading untuk panduan yang menjelaskan status HTTP, memiliki bagian redirect dan soft 404, serta filter contoh berdasarkan framework.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Gunakan URL utama seperti `/panduan/status-http/`. Bagian dapat memakai H2 `Redirect` dengan `id="redirect"` dan H2 `Soft 404` dengan `id="soft-404"`. Jika filter benar-benar mengubah daftar contoh, query seperti `?framework=nextjs` dapat dipakai. Jangan membuat isi utama berbeda hanya melalui fragment.
+
+</details>
+
+## Rujukan
+
+- [Struktur URL](https://developers.google.com/search/docs/crawling-indexing/url-structure?hl=id)
+- [Membuat link yang dapat dirayapi](https://developers.google.com/search/docs/crawling-indexing/links-crawlable?hl=id)
+- [Panduan memulai SEO](https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=id)

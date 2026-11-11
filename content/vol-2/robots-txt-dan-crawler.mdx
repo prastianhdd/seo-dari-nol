@@ -1,0 +1,87 @@
+## Masalah nyata
+
+Bayangkan sebuah situs menambahkan `Disallow: /private/` ke `robots.txt`. Pengunjung yang tahu alamatnya masih bisa membuka halaman itu. URL-nya juga masih bisa diketahui Google dari tautan lain.
+
+Di bab ini, kamu akan belajar membaca aturan `robots.txt` dan memilih cara yang sesuai saat ingin membatasi crawling, mencegah pengindeksan, atau melindungi halaman privat.
+
+## Tujuan belajar
+
+Kamu akan menempatkan `robots.txt`, menulis grup dan aturan, memahami prioritas pencocokan, serta membedakan pembatasan crawling dari keamanan dan pengindeksan.
+
+## Konsep inti
+
+`robots.txt` berada tepat di root host, misalnya `https://seo.example.com/robots.txt`, dan hanya berlaku untuk protokol, host, serta port tersebut. Formatnya UTF-8 dan Google membaca hingga 500 KiB.
+
+Crawler memilih grup `User-agent` paling spesifik. Untuk `Allow` dan `Disallow`, path pencocokan terpanjang menang; jika sama kuat, `Allow` menang. `*` mencocokkan karakter dan `$` menandai akhir URL. Google tidak mendukung `crawl-delay`.
+
+Robots mengendalikan crawling, bukan keamanan atau penghapusan pasti dari indeks. URL yang diblokir masih mungkin dikenali dari tautan. Gunakan autentikasi untuk data privat dan `noindex` untuk mencegah indeks—dengan crawling tetap diizinkan agar aturan terbaca.
+
+## Praktik langkah demi langkah
+
+File `public/robots.txt`:
+
+```text
+User-agent: *
+Allow: /
+Disallow: /hasil-pencarian/
+Disallow: /*?sesi=
+
+Sitemap: https://seo.example.com/sitemap.xml
+```
+
+Aturan spesifik untuk bot tertentu:
+
+```text
+User-agent: Googlebot
+Disallow: /eksperimen/
+Allow: /eksperimen/dokumentasi-publik/
+
+User-agent: *
+Disallow: /eksperimen/
+```
+
+Path `Allow` lebih panjang sehingga dokumentasi publik dapat dirayapi oleh Googlebot. Jangan menaruh token atau rahasia dalam file ini.
+
+Pada Next.js, route metadata dapat menghasilkan robots saat build. Contoh `app/robots.ts`:
+
+```ts
+import type { MetadataRoute } from "next";
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: { userAgent: "*", allow: "/", disallow: "/hasil-pencarian/" },
+    sitemap: "https://seo.example.com/sitemap.xml",
+  };
+}
+```
+
+## Verifikasi dan hasil yang diharapkan
+
+Ambil `/robots.txt`, pastikan status `200`, content type teks, dan baris `Sitemap` absolut. Uji aturan dengan robots.txt tester atau alat inspeksi yang tersedia. Periksa kapitalisasi path karena pencocokan peka kapital.
+
+Hasil yang diharapkan: halaman publik diizinkan, area yang membuang crawl dibatasi, dan tidak ada halaman `noindex` yang sekaligus diblokir. Data privat tetap dilindungi autentikasi.
+
+## Kesalahan umum
+
+- Menggunakan robots sebagai keamanan.
+- Memblokir URL lalu mengharapkan meta `noindex` dibaca.
+- Menaruh file di subdirektori.
+- Memakai `crawl-delay` untuk Google.
+- Salah kapitalisasi atau lupa slash awal.
+- Memblokir CSS/JS yang dibutuhkan rendering.
+
+## Latihan
+
+Kamu ingin mencegah indeks halaman profil internal yang masih harus dapat dibaca Google untuk menemukan `noindex`. Apakah path diblokir?
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Tidak. Izinkan crawling, kirim `noindex`, dan gunakan autentikasi bila halaman benar-benar privat. Robots bukan perlindungan akses.
+
+</details>
+
+## Rujukan
+
+- [Pengantar robots.txt](https://developers.google.com/search/docs/crawling-indexing/robots/intro?hl=id)
+- [Spesifikasi robots.txt Google](https://developers.google.com/search/docs/crawling-indexing/robots/robots_txt?hl=id)

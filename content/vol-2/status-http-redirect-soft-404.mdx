@@ -1,0 +1,98 @@
+## Masalah nyata
+
+Bayangkan kamu membuka tautan lama dan melihat pesan “Halaman tidak ditemukan”. Saat dicek di DevTools, server justru mengirim `200 OK`. Pesan yang dibaca pengunjung dan status yang diterima crawler menyampaikan hal berbeda.
+
+Di bab ini, kamu akan belajar memilih status HTTP yang sesuai untuk halaman yang tersedia, pindah, atau dihapus. Kamu juga akan memeriksa rantai redirect dan mengenali kasus soft 404.
+
+## Tujuan belajar
+
+Setelah bab ini, kamu dapat membedakan `200`, redirect permanen dan sementara, `404`, `410`, `429`, `5xx`, serta soft 404; memilih respons yang sesuai; dan memeriksa rantai redirect.
+
+## Konsep inti
+
+Status HTTP menyatakan hasil permintaan. Respons `2xx` dapat diproses, tetapi tidak menjamin indeks. `301` dan `308` menunjukkan pemindahan permanen; `302`, `303`, dan `307` bersifat sementara. Google mengikuti redirect, tetapi rantai panjang membuang waktu dan dapat gagal setelah terlalu banyak lompatan.
+
+`404` berarti sumber tidak ditemukan. `410` menyatakan sumber sengaja dihapus. Keduanya membuat konten diabaikan dan URL akhirnya dikeluarkan dari indeks. `429` serta `5xx` menandakan masalah kapasitas/server dan dapat memperlambat crawling. Soft 404 terjadi ketika server memberi `200`, tetapi isi tampak seperti error atau kosong.
+
+## Praktik langkah demi langkah
+
+Respons halaman normal:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+<!doctype html><title>Panduan cache</title><h1>Panduan cache</h1>
+```
+
+Pemindahan permanen:
+
+```http
+HTTP/1.1 308 Permanent Redirect
+Location: https://seo.example.com/panduan/cache-browser/
+```
+
+Pemindahan sementara saat eksperimen:
+
+```http
+HTTP/1.1 307 Temporary Redirect
+Location: https://seo.example.com/eksperimen/cache-baru/
+```
+
+Sumber hilang:
+
+```http
+HTTP/1.1 404 Not Found
+Content-Type: text/html; charset=utf-8
+
+<!doctype html><title>Halaman tidak ditemukan</title><h1>404</h1>
+```
+
+Contoh konfigurasi Netlify `_redirects` untuk hosting statis:
+
+```text
+/panduan/cache-lama/ /panduan/cache-browser/ 308
+```
+
+Next.js dengan `output: "export"` tidak menjalankan redirect atau header runtime. Aturan tersebut harus dipasang di hosting/CDN. Jangan menaruh redirect di `next.config.ts` lalu menganggap ekspor statis akan melayaninya.
+
+## Verifikasi dan hasil yang diharapkan
+
+Periksa tanpa mengikuti redirect lebih dahulu:
+
+```bash
+curl -I https://seo.example.com/panduan/cache-lama/
+```
+
+Lalu ikuti rantai:
+
+```bash
+curl -IL https://seo.example.com/panduan/cache-lama/
+```
+
+Hasil yang diharapkan: URL lama memberi satu redirect permanen langsung ke target `200`. URL yang benar-benar hilang memberi `404`, bukan `200` atau redirect ke beranda. Search Console dapat melabeli respons `200` yang berisi pesan error sebagai soft 404.
+
+## Kesalahan umum
+
+- Mengembalikan `200` untuk semua error.
+- Mengarahkan semua URL hilang ke beranda.
+- Membuat rantai atau loop redirect.
+- Memakai redirect sementara untuk migrasi permanen.
+- Menganggap `404` merusak seluruh situs.
+- Menyajikan `200` kosong saat JavaScript gagal.
+
+## Latihan
+
+Pilih respons untuk: artikel pindah permanen, halaman promosi dinonaktifkan seminggu, dan ID produk yang tidak pernah ada.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Artikel: `301` atau `308` langsung ke URL baru. Promosi sementara: `302` atau `307` menuju halaman status yang relevan jika memang akan kembali. ID yang tidak pernah ada: `404`.
+
+</details>
+
+## Rujukan
+
+- [Status HTTP dan error jaringan](https://developers.google.com/search/docs/crawling-indexing/http-network-errors?hl=id)
+- [Redirect dan Google Search](https://developers.google.com/search/docs/crawling-indexing/301-redirects?hl=id)

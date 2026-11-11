@@ -1,0 +1,102 @@
+## Masalah nyata
+
+Bayangkan halaman hasil pencarian internal masih muncul di Google. Kamu sudah menambahkan `noindex` di HTML dan menutup aksesnya lewat `robots.txt`. Kalau Googlebot tidak bisa membuka halaman, ia juga tidak bisa membaca tag itu.
+
+Di bab ini, kamu akan belajar memakai `noindex` pada halaman HTML, mengirimnya lewat header HTTP untuk file seperti PDF, dan memeriksa apakah aturannya dapat dibaca crawler.
+
+## Tujuan belajar
+
+Kamu akan memilih antara robots.txt, robots meta, `X-Robots-Tag`, redirect, dan canonical; menerapkan `noindex`; serta memahami mengapa crawling harus diizinkan.
+
+## Konsep inti
+
+Robots meta berlaku pada HTML dan ditempatkan di `<head>`. `X-Robots-Tag` adalah header HTTP dan cocok untuk HTML maupun aset non-HTML. `noindex` mencegah URL tampil di hasil; `nofollow` meminta tautan tidak diikuti; `nosnippet` meniadakan cuplikan teks. Bila aturan bertentangan, aturan paling membatasi berlaku.
+
+Crawler harus mengambil URL untuk membaca aturan. Jangan memblokir URL di `robots.txt` saat mengandalkan `noindex`.
+
+| Kebutuhan | Pilihan utama |
+|---|---|
+| Kurangi crawling path tak penting | robots.txt |
+| Cegah indeks halaman HTML | robots meta `noindex` |
+| Cegah indeks PDF/gambar | `X-Robots-Tag: noindex` |
+| URL pindah | redirect |
+| URL duplikat tetap tersedia | canonical |
+| Data privat | autentikasi |
+
+<TechnicalFigure
+  src="/illustrations/diagram-indexing-decision.svg"
+  alt="Diagram pemilihan autentikasi, redirect, noindex, canonical, dan robots.txt"
+  caption="Pilih kontrol berdasarkan tujuan URL, bukan berdasarkan alat yang paling mudah dipasang."
+>
+  Data privat membutuhkan autentikasi; URL pindah memakai redirect; pencegahan indeks memakai noindex; duplikat memakai canonical; pembatasan crawling memakai robots.txt. Crawling harus diizinkan agar noindex terbaca.
+</TechnicalFigure>
+
+## Praktik langkah demi langkah
+
+HTML:
+
+```html
+<head>
+  <meta name="robots" content="noindex, follow">
+</head>
+```
+
+Header untuk PDF:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/pdf
+X-Robots-Tag: noindex
+```
+
+Contoh konfigurasi Netlify `_headers`:
+
+```text
+/download/*.pdf
+  X-Robots-Tag: noindex
+```
+
+Contoh Nginx:
+
+```nginx
+location ~* ^/download/.*\.pdf$ {
+  add_header X-Robots-Tag "noindex" always;
+}
+```
+
+Next.js static export tidak dapat menghasilkan header HTTP runtime. Terapkan `_headers`, konfigurasi CDN, atau server hosting. Untuk halaman HTML statis, metadata Next dapat menghasilkan meta robots dalam dokumen.
+
+## Verifikasi dan hasil yang diharapkan
+
+Untuk HTML, gunakan View Source dan cari meta robots. Untuk aset:
+
+```bash
+curl -I https://seo.example.com/download/laporan.pdf
+```
+
+Pastikan `X-Robots-Tag: noindex` hadir dan robots.txt tidak memblokir URL. **Simulasi Search Console:** URL Inspection dapat menunjukkan status setelah Google merayapi ulang; perubahan tidak seketika.
+
+## Kesalahan umum
+
+- Memblokir crawling dan memasang `noindex` bersamaan.
+- Menggunakan meta HTML untuk PDF.
+- Menganggap `noindex` sebagai autentikasi.
+- Memakai `nofollow` pada semua tautan internal.
+- Lupa bahwa header static export ditentukan hosting.
+- Menghapus `noindex` tetapi membiarkan robots memblokir crawling ulang.
+
+## Latihan
+
+Pilih kontrol untuk halaman staging rahasia, PDF publik yang tak boleh diindeks, dan URL produk yang pindah permanen.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Staging rahasia: autentikasi, idealnya juga pembatasan jaringan. PDF: `X-Robots-Tag: noindex` sambil mengizinkan crawling. Produk pindah: `301`/`308` ke URL baru.
+
+</details>
+
+## Rujukan
+
+- [Robots meta dan X-Robots-Tag](https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag?hl=id)
+- [Pengantar robots.txt](https://developers.google.com/search/docs/crawling-indexing/robots/intro?hl=id)

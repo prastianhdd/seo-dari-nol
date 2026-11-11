@@ -1,0 +1,95 @@
+## Masalah nyata
+
+Bayangkan sebuah halaman panduan menambahkan rating bintang di JSON-LD, tetapi pengunjung tidak bisa melihat rating itu di halaman. Kodenya bisa terbaca sebagai JSON, namun isinya tidak sesuai dengan yang ditampilkan.
+
+Di bab ini, kamu akan membuat structured data dari breadcrumb yang benar-benar terlihat di halaman, mengujinya, dan memahami apa arti hasil pengujian bagi kelayakan rich result.
+
+## Tujuan belajar
+
+Kamu akan memilih tipe yang cocok, membuat JSON-LD BreadcrumbList sesuai breadcrumb visual, menguji markup, dan membedakan validitas, kelayakan, serta kemunculan rich result.
+
+## Konsep inti
+
+Structured data memberi konteks eksplisit dan dapat membuat halaman memenuhi syarat untuk fitur Search. Google mendukung JSON-LD, Microdata, dan RDFa; JSON-LD direkomendasikan karena mudah dipelihara.
+
+Markup harus menggambarkan konten yang terlihat dan mematuhi kebijakan tipe. Properti wajib harus lengkap. Markup valid hanya memberi kelayakan; Google tidak menjamin rich result ditampilkan.
+
+## Praktik langkah demi langkah
+
+Breadcrumb visual:
+
+```html
+<nav aria-label="Breadcrumb">
+  <a href="https://seo.example.com/">Beranda</a>
+  <a href="https://seo.example.com/vol-3/">Volume 3</a>
+  <span aria-current="page">Structured data dan pengujian</span>
+</nav>
+```
+
+JSON-LD yang cocok:
+
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Beranda",
+      "item": "https://seo.example.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Volume 3",
+      "item": "https://seo.example.com/vol-3/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Structured data dan pengujian"
+    }
+  ]
+}
+</script>
+```
+
+Setiap `position` berupa integer mulai dari 1. Item terakhir boleh tidak memiliki `item`. Jalur harus masuk akal bagi pengguna, bukan hanya menyalin segmen URL.
+
+## Verifikasi dan hasil yang diharapkan
+
+1. Jalankan Rich Results Test pada kode atau URL.
+2. Perbaiki error properti wajib; evaluasi warning sesuai konteks.
+3. Bandingkan markup dengan breadcrumb yang terlihat.
+4. Setelah deploy, gunakan URL Inspection dan laporan enhancement.
+5. Pantau perubahan sebelum-sesudah tanpa menganggap markup sebagai satu-satunya sebab.
+
+Hasil yang diharapkan: markup valid, akurat, dan memenuhi syarat. Kemunculan fitur tetap keputusan Google.
+
+## Kesalahan umum
+
+- Menandai konten tersembunyi atau palsu.
+- Memilih tipe hanya karena tampilannya menarik.
+- Menganggap validasi menjamin rich result.
+- URL breadcrumb tidak kanonis.
+- Posisi dimulai dari 0 atau berulang.
+- Markup dan breadcrumb visual berbeda.
+
+## Latihan
+
+Breadcrumb terlihat: Beranda → Volume 2 → Canonical. Susun tiga `ListItem`.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Gunakan posisi 1–3; item absolut untuk Beranda dan Volume 2; nama `Canonical dan URL duplikat` pada item terakhir. Semua label harus cocok dengan navigasi terlihat.
+
+</details>
+
+## Rujukan
+
+- [Pengantar structured data](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data?hl=id)
+- [Breadcrumb structured data](https://developers.google.com/search/docs/appearance/structured-data/breadcrumb?hl=id)
+- [Rich Results Test](https://search.google.com/test/rich-results)

@@ -1,0 +1,152 @@
+## Masalah nyata
+
+Bayangkan kamu membuka artikel dengan diagram yang menjelaskan langkah penting. Saat gambarnya gagal dimuat, kamu kehilangan petunjuk itu. Lalu, kartu menuju panduan berikutnya terlihat bisa diklik, tetapi ternyata hanya bekerja saat JavaScript berjalan.
+
+Di bab ini, kamu akan belajar menulis teks alternatif sesuai fungsi gambar dan membuat tautan HTML yang bisa diikuti pengguna maupun crawler.
+
+## Tujuan belajar
+
+Setelah bab ini, kamu dapat:
+
+- membedakan gambar informatif dan dekoratif;
+- menulis alt text berdasarkan isi serta fungsi;
+- memilih dimensi, format, dan pemuatan gambar yang wajar;
+- membuat tautan crawlable dengan `<a href>`;
+- menghubungkan halaman penting secara kontekstual.
+
+## Konsep inti
+
+### Alt text menjelaskan pengganti gambar
+
+Untuk gambar informatif, jelaskan informasi yang dibawa dalam konteks halaman. Untuk gambar dekoratif, gunakan `alt=""` agar pembaca layar dapat melewatinya. Jika gambar menjadi tautan, alt berfungsi seperti anchor text dan harus menjelaskan tujuannya.
+
+Hindari “gambar”, “foto”, atau deretan kata kunci jika tidak menambah informasi. Caption dan teks sekitar dapat memberi konteks tambahan; alt tetap harus berguna ketika gambar tidak terlihat.
+
+### Gambar perlu stabil dan efisien
+
+Berikan `width` dan `height` untuk membantu browser menyediakan ruang sebelum gambar selesai dimuat. Pilih format yang sesuai, kompres, dan gunakan gambar responsif. Google mendukung format umum termasuk JPEG, PNG, WebP, SVG, dan AVIF. Pastikan ekstensi cocok dengan isi berkas.
+
+Gambar penting sebaiknya memakai `<img>` atau komponen yang menghasilkan `<img>`, bukan hanya CSS background. Letakkan dekat teks terkait dan gunakan nama berkas singkat-deskriptif.
+
+### Tautan harus memiliki URL
+
+Bentuk paling andal adalah `<a href="URL">teks deskriptif</a>`. Setiap halaman penting perlu ditautkan dari setidaknya satu halaman lain. Gunakan anchor yang natural dan menjelaskan tujuan; tidak ada jumlah tautan ideal yang wajib dipenuhi.
+
+## Praktik langkah demi langkah
+
+Contoh gambar informatif pada `alur-crawling.html`:
+
+```html
+<figure>
+  <img
+    src="/images/alur-crawling.svg"
+    width="960"
+    height="540"
+    alt="Alur URL ditemukan, dirayapi, dirender, lalu dipertimbangkan untuk indeks"
+  >
+  <figcaption>
+    Diagram menyederhanakan tahap Search; setiap tahap tidak menjamin tahap berikutnya.
+  </figcaption>
+</figure>
+```
+
+Gambar dekoratif:
+
+```html
+<img src="/images/pola-titik.svg" width="240" height="120" alt="">
+```
+
+Gambar yang menjadi tautan:
+
+```html
+<a href="/vol-2/sitemap-xml-dan-index/">
+  <img
+    src="/images/sampul-sitemap.svg"
+    width="640"
+    height="400"
+    alt="Baca bab sitemap XML dan sitemap index"
+  >
+</a>
+```
+
+Contoh gambar responsif:
+
+```html
+<img
+  src="/images/audit-800.webp"
+  srcset="/images/audit-400.webp 400w, /images/audit-800.webp 800w"
+  sizes="(max-width: 640px) 100vw, 800px"
+  width="800"
+  height="450"
+  alt="Tabel audit dengan temuan, prioritas, tindakan, dan status verifikasi"
+  loading="lazy"
+>
+```
+
+Jangan menerapkan `loading="lazy"` secara otomatis pada gambar hero yang langsung terlihat. Penundaan gambar utama dapat merusak pengalaman pemuatan.
+
+Buat tautan internal dalam konteks:
+
+```html
+<p>
+  Setelah memahami penemuan URL, lanjutkan ke
+  <a href="/vol-2/sitemap-xml-dan-index/">
+    cara membuat sitemap XML dari katalog rute
+  </a>.
+</p>
+```
+
+Pada Next.js, `Link` menghasilkan anchor:
+
+```tsx
+import Link from "next/link";
+
+export function Lanjutan() {
+  return (
+    <Link href="/vol-2/sitemap-xml-dan-index/">
+      Membuat sitemap XML dari katalog rute
+    </Link>
+  );
+}
+```
+
+## Verifikasi dan hasil yang diharapkan
+
+1. Nonaktifkan gambar atau ubah `src` sementara. Alt harus menyampaikan informasi penting.
+2. Gunakan pembaca layar atau accessibility tree. Gambar dekoratif tidak perlu diumumkan.
+3. Pastikan `width` dan `height` ada serta sesuai rasio intrinsik.
+4. Periksa Network: format dan ukuran sesuai kebutuhan tampilan.
+5. Buka View Source. Gambar penting hadir sebagai `<img>` dan tautan hadir sebagai `<a href>`.
+6. Navigasi dengan Tab. Tautan memiliki fokus terlihat dan Enter membuka tujuan.
+7. Periksa semua halaman penting dari katalog. Masing-masing harus mendapat setidaknya satu tautan internal.
+
+Hasil yang diharapkan: informasi gambar tetap dapat dipahami tanpa visual, layout tidak meloncat secara tidak perlu, dan setiap halaman penting memiliki jalur tautan HTML.
+
+## Kesalahan umum
+
+- Mengisi alt dengan daftar kata kunci.
+- Menulis alt identik untuk semua gambar.
+- Memberi deskripsi panjang pada gambar dekoratif.
+- Menyimpan diagram informatif hanya sebagai background CSS.
+- Tidak menyediakan dimensi gambar.
+- Memuat gambar hero secara lazy tanpa alasan.
+- Membuat kartu dengan `<div onclick>` tanpa anchor.
+- Menggunakan anchor “klik di sini” berulang kali.
+- Menambahkan puluhan tautan tanpa konteks hanya untuk “internal linking”.
+
+## Latihan
+
+Tentukan alt dan anchor untuk kartu yang menampilkan diagram sitemap index dan membuka bab sitemap.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Jika seluruh kartu adalah tautan dan gambar hanya mengulang judul yang terlihat, gambar dapat memakai `alt=""`; anchor text yang terlihat adalah `Sitemap XML dan sitemap index`. Jika gambar merupakan satu-satunya isi tautan, gunakan alt seperti `Baca bab sitemap XML dan sitemap index`. Hindari mengumumkan judul dua kali.
+
+</details>
+
+## Rujukan
+
+- [Praktik terbaik SEO Gambar Google](https://developers.google.com/search/docs/appearance/google-images?hl=id)
+- [Membuat link yang dapat dirayapi](https://developers.google.com/search/docs/crawling-indexing/links-crawlable?hl=id)
+- [Panduan memulai SEO](https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=id)

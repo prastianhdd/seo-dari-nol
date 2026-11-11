@@ -1,0 +1,156 @@
+## Masalah nyata
+
+Bayangkan kamu baru menerbitkan sebuah artikel di website. Halamannya bisa dibuka, dan tautannya sudah kamu kirim ke teman. Tapi saat kamu mencari judul artikel itu di Google, halamannya belum terlihat.
+
+Di bab ini, kamu akan belajar membedakan tiga hal. Apakah Google sudah menemukan halamanmu? Apakah halaman itu sudah masuk indeks? Dan apakah Google menampilkannya untuk pencarian tertentu? Dengan memahami tahapnya, kamu bisa menentukan apa yang perlu diperiksa lebih dulu.
+
+## Tujuan belajar
+
+Setelah bab ini, kamu dapat:
+
+- membedakan penemuan URL, crawling, rendering, indexing, dan serving;
+- menjelaskan bahwa sitemap membantu penemuan, bukan menjamin indeks;
+- membuat halaman HTML sederhana yang dapat dibaca tanpa menunggu JavaScript;
+- memilih pemeriksaan yang sesuai untuk setiap tahap;
+- menghindari janji bahwa halaman pasti muncul atau memiliki peringkat tertentu.
+
+## Konsep inti
+
+Google Search bekerja melalui beberapa sistem. Penyederhanaan berikut berguna untuk diagnosis, walaupun proses nyata tidak selalu berjalan sebagai antrean lurus.
+
+### 1. Penemuan URL
+
+Google perlu mengetahui bahwa URL ada. URL dapat ditemukan melalui tautan dari halaman yang sudah diketahui atau melalui sitemap. Karena itu, halaman tanpa tautan internal sering lebih sulit ditemukan. Sitemap membantu Google mengetahui kandidat URL, tetapi pengiriman sitemap tidak menjamin crawling maupun pengindeksan.
+
+### 2. Crawling
+
+Googlebot meminta URL melalui HTTP. Server dapat mengembalikan HTML, redirect, error, atau respons lain. Akses juga dapat dipengaruhi `robots.txt`. Crawling bukan pengindeksan: berhasil mengambil URL tidak berarti Google akan menyimpannya dalam indeks.
+
+### 3. Rendering
+
+Halaman yang memakai JavaScript dapat dirender agar konten hasil eksekusi terlihat. Rendering membutuhkan sumber daya tambahan dan dapat terjadi setelah HTML awal diambil. Konten utama yang sudah ada dalam HTML awal lebih mudah diperiksa dan tidak bergantung pada keberhasilan JavaScript sisi klien.
+
+### 4. Indexing
+
+Google menganalisis teks, gambar, metadata, bahasa, canonical, serta sinyal lain. Google dapat memutuskan tidak mengindeks halaman, memilih URL kanonis lain, atau memperbarui versi yang tersimpan kemudian. Tidak semua halaman yang dirayapi masuk indeks.
+
+### 5. Serving
+
+Saat seseorang mencari, sistem Google memilih hasil yang dianggap relevan dengan kueri, lokasi, bahasa, perangkat, dan konteks lain. Halaman yang diindeks belum tentu tampil untuk semua kueri. Posisi juga dapat berubah.
+
+Ringkasnya:
+
+<TechnicalFigure
+  src="/illustrations/diagram-search.svg"
+  alt="Alur URL ditemukan, dirayapi, dirender, dipertimbangkan untuk indeks, lalu mungkin disajikan"
+  caption="Alur konseptual Google Search; setiap tahap bukan jaminan menuju tahap berikutnya."
+>
+  URL ditemukan melalui tautan atau sitemap, dirayapi, dirender bila perlu, dipertimbangkan untuk indeks, lalu mungkin disajikan untuk kueri yang relevan.
+</TechnicalFigure>
+
+Tanda panah tidak berarti jaminan. Setiap tahap dapat ditunda, dilewati, atau menghasilkan keputusan berbeda.
+
+## Praktik langkah demi langkah
+
+Buat halaman yang tetap menyampaikan isi utama lewat respons HTML. File contoh `cache-browser.html`:
+
+```html
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Memahami Cache Browser | Proyek Web</title>
+    <meta
+      name="description"
+      content="Pelajari fungsi cache browser, kapan cache diperbarui, dan cara memeriksa responsnya."
+    >
+    <link
+      rel="canonical"
+      href="https://seo.example.com/panduan/cache-browser/"
+    >
+  </head>
+  <body>
+    <main>
+      <h1>Memahami cache browser</h1>
+      <p>
+        Cache menyimpan salinan respons agar permintaan berikutnya dapat lebih cepat.
+      </p>
+      <h2>Cara memeriksa cache</h2>
+      <p>Mulai dari header respons, lalu bandingkan perilaku setelah pemuatan ulang.</p>
+      <a href="/panduan/header-http/">Lanjutkan ke panduan header HTTP</a>
+    </main>
+  </body>
+</html>
+```
+
+Pastikan halaman lain menautkan URL tersebut dengan elemen `<a>` biasa:
+
+```html
+<a href="/panduan/cache-browser/">Panduan cache browser</a>
+```
+
+Tambahkan URL kanonis ke sitemap jika halaman memang layak menjadi halaman publik. Potongan `sitemap.xml`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://seo.example.com/panduan/cache-browser/</loc>
+  </url>
+</urlset>
+```
+
+Jangan menambahkan URL redirect, URL `noindex`, atau variasi duplikat hanya agar sitemap terlihat besar. Sitemap seharusnya berisi URL kanonis yang ingin kamu tampilkan di Search.
+
+## Verifikasi dan hasil yang diharapkan
+
+Lakukan pemeriksaan dari lapisan terdekat terlebih dahulu.
+
+1. **Respons HTTP.** Buka URL atau gunakan alat HTTP. Hasil yang diharapkan adalah status `200` untuk halaman normal, bukan redirect berantai atau error.
+2. **HTML awal.** Gunakan View Source, bukan hanya panel Elements. Hasil yang diharapkan: title, description, canonical, H1, paragraf utama, dan tautan sudah terdapat dalam sumber HTML.
+3. **DOM hasil render.** Gunakan DevTools Elements. Bandingkan dengan HTML awal untuk mengetahui perubahan akibat JavaScript.
+4. **Tautan internal.** Pastikan ada halaman publik yang menautkan URL dengan `href` yang dapat diikuti.
+5. **Sitemap.** Pastikan URL absolut dan kanonis muncul satu kali.
+6. **URL Inspection.** Setelah situs nyata diverifikasi di Search Console, periksa status URL. Untuk buku ini, langkah tersebut adalah **simulasi** karena tidak ada akses ke properti produksi.
+
+Diagnosis sederhana:
+
+| Gejala | Tahap awal yang diperiksa |
+|---|---|
+| URL tidak diketahui | Penemuan URL, tautan internal, sitemap |
+| Googlebot tidak bisa mengambil halaman | Crawling, robots.txt, status HTTP |
+| Konten utama hilang dari hasil render | JavaScript dan rendering |
+| URL dirayapi tetapi tidak diindeks | Kualitas isi, noindex, canonical, duplikasi |
+| URL diindeks tetapi tidak muncul untuk kueri | Relevansi dan serving |
+
+Hasil yang diharapkan bukan “langsung peringkat satu”. Hasil praktik adalah halaman dapat ditemukan melalui tautan, memberikan respons benar, dan menyertakan isi utama dalam HTML yang dapat diperiksa.
+
+## Kesalahan umum
+
+- Menganggap sitemap sebagai perintah wajib indeks.
+- Memblokir URL di `robots.txt`, lalu berharap Google membaca `noindex` di halaman itu.
+- Menaruh seluruh isi penting setelah interaksi pengguna atau panggilan JavaScript yang gagal.
+- Menyamakan “URL ada di indeks” dengan “URL selalu muncul untuk kata kunci target”.
+- Mengubah banyak sinyal sekaligus sehingga penyebab masalah sulit dilacak.
+- Menggunakan pemeriksaan DOM hasil render untuk menyimpulkan bahwa HTML awal juga lengkap.
+
+## Latihan
+
+Sebuah halaman baru mengembalikan status `200`, ada di sitemap, tetapi tidak memiliki tautan dari halaman lain. HTML awal hanya berisi elemen `<div id="app"></div>`; konten dimuat setelah pengguna menekan tombol. Sebutkan dua risiko dan dua perbaikan pertama.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Risiko pertama adalah penemuan URL terlalu bergantung pada sitemap karena tidak ada tautan internal. Risiko kedua adalah konten utama bergantung pada JavaScript dan interaksi tombol, sehingga hasil render crawler dapat kosong.
+
+Perbaikan pertama: tambahkan tautan HTML biasa dari halaman relevan. Perbaikan kedua: render isi utama ke HTML awal; JavaScript boleh meningkatkan interaksi, bukan menjadi satu-satunya jalan menuju isi.
+
+</details>
+
+## Rujukan
+
+- [Cara kerja Google Search](https://developers.google.com/search/docs/fundamentals/how-search-works?hl=id)
+- [Panduan memulai SEO](https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=id)
+- [Membuat dan mengirimkan sitemap](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap?hl=id)
+- [Dasar-dasar SEO JavaScript](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics?hl=id)

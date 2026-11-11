@@ -1,0 +1,75 @@
+## Masalah nyata
+
+Bayangkan sebuah website selesai migrasi, lalu klik dari Google mulai turun. Beberapa URL berubah dan konfigurasi pengindeksan ikut diperbarui. Tanpa catatan kondisi awal, sulit menentukan apa yang perlu diperiksa lebih dulu.
+
+Di bab ini, kamu akan belajar mencatat kondisi sebelum deploy, membandingkannya dengan hasil sesudah deploy, dan menyusun prioritas perbaikan berdasarkan bukti.
+
+## Tujuan belajar
+
+Kamu akan membuat audit berulang, memeriksa sitemap terhadap status dan sinyal, memprioritaskan temuan, serta membandingkan kondisi sebelum dan sesudah deploy.
+
+## Konsep inti
+
+Audit bukan daftar skor. Audit menghubungkan bukti, dampak, tindakan, pemilik, dan verifikasi ulang. Mulai dari kemampuan akses: status HTTP, robots, noindex, canonical, rendering, serta tautan internal. Baru kemudian nilai metadata, konten, structured data, dan pengalaman halaman.
+
+Untuk penurunan trafik, bandingkan periode panjang, segmentasikan jenis Search, halaman, kueri, negara, dan perangkat. Cocokkan waktu perubahan dengan deploy, musim, anomali data, pembaruan sistem, keamanan, dan tindakan manual. Hindari reaksi besar terhadap fluktuasi kecil.
+
+## Praktik langkah demi langkah
+
+Template `audit.csv`:
+
+```csv
+url,temuan,bukti,dampak,prioritas,tindakan,verifikasi,status
+/produk-lama/,URL sitemap memberi 308,curl -I,Tinggi,P1,Hapus dari sitemap dan tautkan target,Target 200 dan sitemap bersih,Terbuka
+/panduan-a/,Meta noindex,View Source,Tinggi,P1,Hapus noindex jika publik,HTML baru dan inspeksi ulang,Terbuka
+/panduan-b/,Canonical berbeda,View Source,Sedang,P2,Selaraskan canonical dan sitemap,Canonical absolut benar,Terbuka
+/panduan-c/,Tidak ada tautan internal,Crawl lokal,Sedang,P2,Tautkan dari halaman volume,Crawl menemukan URL,Terbuka
+```
+
+Audit sitemap terhadap setiap URL:
+
+```text
+1. Respons akhir harus 200.
+2. Tidak ada noindex.
+3. Canonical self-referencing atau sesuai keputusan yang terdokumentasi.
+4. URL ada dalam navigasi/tautan internal.
+5. Isi utama tersedia dalam HTML awal.
+6. Title dan description unik serta akurat.
+```
+
+Sebelum deploy, simpan baseline rute, status, metadata, sitemap, dan—jika tersedia—data Search Console. Setelah deploy, jalankan pemeriksaan sama dan bandingkan hasil. Ubah satu kelompok masalah per iterasi.
+
+**Simulasi Search Console:** rentang 16 bulan menunjukkan klik turun pada hari migrasi. Segmentasi menemukan hanya path `/panduan/` yang turun. URL Inspection memperlihatkan redirect berantai. Bukti tersebut memprioritaskan perbaikan redirect dibanding menulis ulang seluruh konten.
+
+## Verifikasi dan hasil yang diharapkan
+
+Setiap temuan harus memiliki cara tutup. Contoh: “hapus URL 3xx dari sitemap” selesai hanya setelah sitemap baru tidak memuat URL, target memberi `200`, dan tautan internal tidak lagi menuju URL lama.
+
+Jalankan ulang audit setelah deploy. Catat tanggal dan bukti. Dampak Search dapat membutuhkan beberapa minggu atau bulan; status teknis lokal dapat diverifikasi segera.
+
+## Kesalahan umum
+
+- Mengandalkan satu skor audit.
+- Tidak menyimpan baseline.
+- Mencampur temuan dengan dugaan.
+- Memperbaiki banyak variabel sekaligus.
+- Mengabaikan URL orphan karena tidak ada di crawl berbasis tautan.
+- Menutup temuan tanpa verifikasi ulang.
+- Menganggap korelasi waktu sebagai sebab pasti.
+
+## Latihan
+
+Sitemap memiliki URL `302`, `404`, `noindex`, canonical berbeda, dan satu halaman tanpa tautan internal. Urutkan tindakan.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Prioritaskan URL publik yang tidak dapat diindeks: perbaiki `404` yang seharusnya hidup dan keputusan `noindex`. Hapus URL `302` dari sitemap lalu cantumkan target kanonis `200`. Selaraskan canonical. Tambahkan tautan internal relevan. Verifikasi setiap status, HTML, sitemap, dan crawl ulang.
+
+</details>
+
+## Rujukan
+
+- [Mendiagnosis penurunan trafik Search](https://developers.google.com/search/docs/monitor-debug/debugging-search-traffic-drops?hl=id)
+- [Memulai Search Console](https://developers.google.com/search/docs/monitor-debug/search-console-start?hl=id)
+- [Panduan memulai SEO](https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=id)

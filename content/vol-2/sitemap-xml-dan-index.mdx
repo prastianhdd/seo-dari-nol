@@ -1,0 +1,98 @@
+## Masalah nyata
+
+Bayangkan kamu membuka sitemap sebuah situs dan menemukan campuran URL lengkap, alamat relatif, dan halaman yang sudah pindah. Semua tanggal `lastmod` juga berubah setiap kali situs di-build, padahal isinya tetap sama.
+
+Di bab ini, kamu akan belajar membuat sitemap XML, memilih URL yang layak dimasukkan, dan memeriksa kapan situs memerlukan sitemap index.
+
+## Tujuan belajar
+
+Kamu akan membuat `<urlset>` dan `<sitemapindex>` valid, memakai URL absolut kanonis, memahami batas file, serta memeriksa sitemap tanpa menyamakan pengiriman dengan jaminan indeks.
+
+## Konsep inti
+
+Sitemap XML harus UTF-8. Satu sitemap memuat maksimal 50.000 URL atau 50 MB tanpa kompresi. Gunakan URL absolut dan hanya URL kanonis yang ingin tampil. `<lastmod>` opsional; isi hanya saat tanggal perubahan substansial benar-benar diketahui. Google mengabaikan `<priority>` dan `<changefreq>`.
+
+Sitemap index mengelompokkan sitemap anak. Satu index memuat maksimal 50.000 elemen `<loc>`. Sitemap membantu penemuan URL; Google tidak menjamin pengunduhan, crawling, atau pengindeksan.
+
+## Praktik langkah demi langkah
+
+File `public/sitemap.xml`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://seo.example.com/</loc>
+  </url>
+  <url>
+    <loc>https://seo.example.com/vol-1/</loc>
+    <lastmod>2026-11-11</lastmod>
+  </url>
+</urlset>
+```
+
+Jangan mengarang `lastmod`. Jangan memasukkan URL `3xx`, `4xx`, `noindex`, atau canonical yang menunjuk URL lain.
+
+Untuk situs besar, file `sitemap-index.xml`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://seo.example.com/sitemaps/pages.xml</loc>
+    <lastmod>2026-11-11</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://seo.example.com/sitemaps/articles.xml</loc>
+  </sitemap>
+</sitemapindex>
+```
+
+<TechnicalFigure
+  src="/illustrations/diagram-sitemap-index.svg"
+  alt="Sitemap index menunjuk pages.xml dan articles.xml, lalu keduanya menunjuk URL kanonis"
+  caption="Sitemap index mengelompokkan sitemap anak; sitemap anak memuat URL kanonis."
+>
+  `sitemap-index.xml` memuat lokasi `pages.xml` dan `articles.xml`. Setiap sitemap anak memuat URL kanonis sesuai kelompoknya.
+</TechnicalFigure>
+
+Cantumkan pada `robots.txt`:
+
+```text
+User-agent: *
+Allow: /
+Sitemap: https://seo.example.com/sitemap.xml
+```
+
+Untuk situs e-book ini, 20 URL cukup dalam satu sitemap. Index di atas adalah contoh pembelajaran, bukan infrastruktur yang perlu dipaksakan.
+
+## Verifikasi dan hasil yang diharapkan
+
+Buka `/sitemap.xml`; respons harus `200` dan XML valid. Hitung `<loc>`, uji setiap URL, lalu cocokkan dengan katalog kanonis. Pastikan tidak ada duplikat dan domain berasal dari konfigurasi produksi.
+
+**Simulasi Search Console:** kirim URL sitemap melalui menu Sitemaps, baca status parsing, lalu periksa URL penting secara terpisah dengan URL Inspection. Status sukses sitemap tidak membuktikan semua URL diindeks.
+
+## Kesalahan umum
+
+- URL relatif atau domain staging.
+- `lastmod` berubah setiap build tanpa perubahan isi.
+- Memakai `priority`/`changefreq` untuk memengaruhi Google.
+- Memasukkan redirect, error, noindex, dan URL duplikat.
+- Membuat sitemap index untuk puluhan URL tanpa kebutuhan.
+- Menganggap pengiriman menjamin indeks.
+
+## Latihan
+
+Audit sitemap yang berisi 120 URL: 4 redirect, 3 `404`, 2 `noindex`, dan 1 canonical berbeda. Berapa URL yang dipertahankan jika sisanya sehat?
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Pertahankan 110 URL kanonis `200`. Hapus 10 URL bermasalah, perbaiki sumber katalognya, lalu verifikasi ulang respons dan canonical sebelum mengirim sitemap.
+
+</details>
+
+## Rujukan
+
+- [Membuat sitemap](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap?hl=id)
+- [Mengelola sitemap besar](https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps?hl=id)

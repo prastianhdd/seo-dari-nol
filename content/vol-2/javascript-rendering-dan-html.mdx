@@ -1,0 +1,103 @@
+## Masalah nyata
+
+Bayangkan sebuah artikel tampil lengkap di browser. Saat kamu membuka View Source, yang terlihat hanya `<div id="app"></div>`. Isi artikel ternyata baru muncul setelah JavaScript berjalan.
+
+Di bab ini, kamu akan belajar membedakan respons server dari tampilan setelah rendering. Kamu juga akan memeriksa apa yang terjadi saat JavaScript gagal atau saat konten baru muncul setelah pengguna berinteraksi.
+
+## Tujuan belajar
+
+Kamu akan membedakan respons HTTP, HTML awal, DOM hasil render, dan tampilan Google; membuat konten utama tersedia lebih awal; serta mendiagnosis kegagalan JavaScript.
+
+## Konsep inti
+
+Googlebot memeriksa robots.txt, mengambil URL, membaca HTML awal, lalu dapat memasukkan halaman `200` ke antrean rendering. Chromium menjalankan JavaScript dan Google membaca rendered DOM. Rendering dapat tertunda dan gagal bila resource diblokir atau kode tidak kompatibel.
+
+SSR, static generation, atau prerender memberi konten utama dalam HTML awal. Client-side JavaScript tetap berguna untuk interaksi. Tautan harus menjadi `<a href>`, status harus benar, dan title/meta unik perlu tersedia secara konsisten.
+
+Empat lapisan diagnosis:
+
+1. Respons HTTP: status, header, body.
+2. View Source: HTML awal dari server.
+3. DevTools Elements: DOM setelah JavaScript.
+4. URL Inspection/Rich Results Test: hasil yang diproses Google.
+
+## Praktik langkah demi langkah
+
+Versi rapuh:
+
+```html
+<div id="app"></div>
+<script>
+  document.querySelector("#app").innerHTML =
+    '<h1>Panduan rendering</h1><p>Konten baru muncul setelah JavaScript.</p>';
+</script>
+```
+
+Versi progresif:
+
+```html
+<main>
+  <h1>Panduan rendering</h1>
+  <p>Konten utama tersedia di HTML awal.</p>
+  <button id="contoh" type="button">Tampilkan contoh tambahan</button>
+  <div id="hasil" aria-live="polite"></div>
+</main>
+<script>
+  document.querySelector("#contoh").addEventListener("click", () => {
+    document.querySelector("#hasil").textContent = "Contoh interaktif dimuat.";
+  });
+</script>
+```
+
+App Router static generation:
+
+```tsx
+export default function Page() {
+  return (
+    <main>
+      <h1>Panduan rendering</h1>
+      <p>Konten ini masuk HTML saat build.</p>
+    </main>
+  );
+}
+```
+
+Untuk URL tidak ada, berikan `404`; jangan render pesan “tidak ditemukan” di aplikasi dengan status `200`. Untuk redirect, gunakan status HTTP hosting, bukan hanya `window.location`.
+
+## Verifikasi dan hasil yang diharapkan
+
+Ambil respons:
+
+```bash
+curl -i https://seo.example.com/panduan/rendering/
+```
+
+Gunakan View Source untuk memastikan H1, isi utama, title, canonical, dan tautan ada. Lalu bandingkan panel Elements. Nonaktifkan JavaScript; tugas utama sebaiknya masih dapat dipahami. Periksa console dan Network untuk error/resource terblokir.
+
+**Simulasi URL Inspection:** gunakan “Lihat halaman yang diuji” untuk membandingkan HTML dan screenshot dari sisi Google. Rich Results Test juga dapat menunjukkan rendered HTML, tetapi kelulusan rich result bukan audit indeks umum.
+
+## Kesalahan umum
+
+- Menyamakan View Source dengan DOM rendered.
+- Menyimpulkan browser lokal mewakili Googlebot.
+- Memerlukan klik atau scroll untuk memuat isi utama.
+- Memblokir JS/CSS penting di robots.txt.
+- Membuat tautan dengan `onclick` atau `#/path`.
+- Mengembalikan `200` untuk error.
+- Mengubah title/meta hanya setelah script yang dapat gagal.
+
+## Latihan
+
+Sebuah produk dimuat setelah klik “Lihat produk”; URL invalid menampilkan pesan error dengan status `200`. Sebutkan perbaikan pertama.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Render informasi produk utama ke HTML awal dan gunakan tombol hanya untuk detail tambahan. URL invalid harus mendapat status `404` dari hosting/server. Pastikan tautan produk memakai `<a href>` nyata.
+
+</details>
+
+## Rujukan
+
+- [Dasar-dasar SEO JavaScript](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics?hl=id)
+- [Memperbaiki masalah JavaScript Search](https://developers.google.com/search/docs/crawling-indexing/javascript/fix-search-javascript?hl=id)

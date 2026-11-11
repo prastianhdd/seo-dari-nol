@@ -1,0 +1,79 @@
+## Masalah nyata
+
+Bayangkan halaman baru sudah bisa dibuka dan sudah tercantum di sitemap. Saat judulnya dicari di Google, halaman itu belum terlihat. Dari hasil pencarian saja, kamu belum tahu kapan Google terakhir merayapinya atau URL mana yang dipilih sebagai canonical.
+
+Di bab ini, kamu akan belajar memakai URL Inspection untuk membaca status yang diketahui Google dan membandingkannya dengan kondisi halaman saat ini lewat uji live.
+
+## Tujuan belajar
+
+Kamu akan memahami fungsi Search Console, memakai URL Inspection secara sistematis, membedakan data indeks dan uji live, serta menghindari klaim bahwa permintaan crawl menjamin indeks.
+
+## Konsep inti
+
+Search Console membantu pemilik situs memantau crawling, indexing, performa Search, structured data, Core Web Vitals, keamanan, dan tindakan manual. Alat ini tidak menjamin ranking atau trafik.
+
+URL Inspection memiliki dua sudut pandang. Status indeks menunjukkan informasi versi yang diketahui Google. Live Test mengambil kondisi URL saat ini, tetapi kelulusan live test tidak membuktikan URL akan diindeks. Permintaan indexing hanya memasukkan permintaan crawl; bukan prioritas atau jaminan.
+
+Untuk materi ini, semua contoh Search Console adalah **simulasi** karena tidak ada properti produksi yang diakses.
+
+## Praktik langkah demi langkah
+
+Sebelum membuka alat, catat diagnosis lokal dalam `inspection-note.md`:
+
+```md
+# Simulasi inspeksi URL
+URL: https://seo.example.com/vol-2/sitemap-xml-dan-index/
+Status HTTP lokal: 200
+Robots: diizinkan
+Meta robots: index, follow
+Canonical deklarasi: URL yang sama
+Ada di sitemap: ya
+Tautan internal: /vol-2/
+```
+
+**Simulasi URL Inspection:** masukkan URL lengkap, lalu periksa:
+
+1. apakah URL ada di Google;
+2. kapan terakhir dirayapi;
+3. apakah crawling diizinkan;
+4. canonical yang dideklarasikan dan dipilih Google;
+5. enhancement atau structured data yang terdeteksi.
+
+Jalankan Live Test jika deploy baru berubah. Bandingkan hasilnya dengan data indeks. Jika live test berhasil tetapi status indeks masih lama, tunggu crawling ulang atau minta indexing satu kali setelah memastikan kualitas teknis.
+
+## Verifikasi dan hasil yang diharapkan
+
+Verifikasi lokal tetap dilakukan terlebih dahulu:
+
+```bash
+curl -I https://seo.example.com/vol-2/sitemap-xml-dan-index/
+```
+
+Periksa View Source untuk title, canonical, robots, dan isi. Lalu gunakan Search Console sebagai pandangan dari sisi Google.
+
+Hasil yang diharapkan adalah diagnosis tahap yang jelas: URL belum ditemukan, crawl terhalang, canonical berbeda, atau belum dipilih untuk indeks. Bukan tombol yang memaksa indeks.
+
+## Kesalahan umum
+
+- Menganggap Live Test sama dengan status indeks.
+- Meminta indexing berulang kali tanpa memperbaiki penyebab.
+- Menyimpulkan tidak ada trafik berarti URL tidak diindeks.
+- Mengabaikan canonical pilihan Google.
+- Mengirim data simulasi seolah berasal dari properti nyata.
+- Menggunakan alat penghapusan sebagai penghapusan permanen tanpa memperbaiki URL.
+
+## Latihan
+
+**Simulasi:** Live Test berhasil, tetapi canonical pilihan Google menunjuk URL lama. Apa yang diperiksa?
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Periksa redirect, canonical, sitemap, tautan internal, kemiripan konten, dan waktu crawling terakhir. Selaraskan sinyal ke URL pilihan lalu tunggu crawling ulang; jangan menganggap deklarasi canonical wajib dipatuhi.
+
+</details>
+
+## Rujukan
+
+- [Memulai Search Console](https://developers.google.com/search/docs/monitor-debug/search-console-start?hl=id)
+- [Alat Inspeksi URL](https://support.google.com/webmasters/answer/9012289?hl=id)

@@ -1,0 +1,82 @@
+## Masalah nyata
+
+Bayangkan satu artikel bisa dibuka dari tautan di menu, tautan promosi dengan parameter, dan versi cetak. Ketiganya memuat isi yang hampir sama, tetapi tiap versi menunjuk URL pilihan yang berbeda.
+
+Di bab ini, kamu akan belajar memilih satu URL utama dan menyelaraskan canonical, tautan internal, serta sitemap agar semuanya menunjuk ke alamat yang sama.
+
+## Tujuan belajar
+
+Kamu akan menentukan URL representatif, mengirim canonical konsisten, membedakan canonical dari redirect, dan memeriksa canonical pilihan Google.
+
+## Konsep inti
+
+Canonical adalah sinyal untuk mengelompokkan URL duplikat atau sangat serupa. Canonical bukan perintah mutlak; Google dapat memilih URL lain. Redirect permanen merupakan sinyal kuat untuk URL yang tidak lagi perlu tersedia. `rel="canonical"` cocok bila variasi masih dibutuhkan pengguna. Sitemap sebaiknya hanya memuat URL pilihan.
+
+Sinyal perlu selaras: HTTPS, redirect, tautan internal, canonical, dan sitemap menunjuk URL yang sama. Jangan canonical halaman yang berbeda maksud hanya karena ingin mengonsolidasikan trafik.
+
+## Praktik langkah demi langkah
+
+URL pilihan:
+
+```text
+https://seo.example.com/panduan/cache-browser/
+```
+
+Pada halaman utama dan variasi parameter, letakkan:
+
+```html
+<link rel="canonical" href="https://seo.example.com/panduan/cache-browser/">
+```
+
+Metadata Next.js:
+
+```tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/panduan/cache-browser/",
+  },
+};
+```
+
+Pastikan root layout memiliki `metadataBase` domain produksi. Untuk `/Panduan/Cache/` yang tidak perlu tersedia, gunakan redirect permanen:
+
+```http
+HTTP/1.1 308 Permanent Redirect
+Location: https://seo.example.com/panduan/cache-browser/
+```
+
+Jangan membuat rantai canonical A ke B lalu B ke C. Gunakan self-canonical pada URL pilihan dan tautkan URL itu secara internal.
+
+## Verifikasi dan hasil yang diharapkan
+
+Periksa View Source, bukan hanya DOM, untuk satu canonical absolut. Audit variasi URL: status, canonical, indexability, dan tautan internal. Cocokkan sitemap agar hanya URL pilihan tercantum.
+
+**Simulasi Search Console:** URL Inspection membedakan canonical yang dideklarasikan pengguna dan canonical pilihan Google. Perbedaan tersebut adalah sinyal diagnosis, bukan error yang selalu harus dipaksa.
+
+## Kesalahan umum
+
+- Canonical semua halaman ke landing page.
+- Canonical relatif tanpa domain dasar yang benar.
+- Sinyal canonical bertentangan dengan sitemap dan redirect.
+- Beberapa elemen canonical pada satu halaman.
+- Menggunakan canonical untuk halaman yang isinya berbeda.
+- Mengharapkan canonical mencegah crawling.
+- Menganggap Google wajib memilih URL yang dideklarasikan.
+
+## Latihan
+
+Artikel tersedia pada URL asli, `?utm_source=newsletter`, dan `/print/`. Versi print dibutuhkan pengguna. Tentukan sinyalnya.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Ketiga versi menunjuk canonical ke URL artikel asli; tautan internal dan sitemap memakai URL asli. Versi print tetap `200` bila dibutuhkan. Parameter kampanye tidak ditautkan sebagai navigasi permanen.
+
+</details>
+
+## Rujukan
+
+- [Menentukan URL kanonis](https://developers.google.com/search/docs/crawling-indexing/canonicalization?hl=id)
+- [Redirect dan Google Search](https://developers.google.com/search/docs/crawling-indexing/301-redirects?hl=id)

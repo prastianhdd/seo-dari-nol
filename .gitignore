@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Area karantina unduhan aset
+.asset-import/
+
+# Next.js dan static export
+.next/
+out/
+
+# Environment lokal; contoh tetap dilacak
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Vercel lokal
+.vercel/
+
+# TypeScript dan tooling
+*.tsbuildinfo
+.eslintcache
+
+# Log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Coverage dan hasil tes
+coverage/
+test-results/
+playwright-report/
+
+# Screenshot QA lokal
+stage*-desktop.png
+stage*-mobile.png
+
+# Editor dan OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini

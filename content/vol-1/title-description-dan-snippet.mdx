@@ -1,0 +1,157 @@
+## Masalah nyata
+
+Bayangkan kamu menerbitkan panduan berjudul “Cara Membersihkan Cache Browser”. Judul itu tampil di halaman, tapi tab browser masih bertuliskan “Untitled”. Saat tautannya dibagikan, pratinjaunya juga menampilkan teks yang berbeda.
+
+Di bab ini, kamu akan melihat bagian HTML yang mengatur judul di tab dan pratinjau saat dibagikan, serta memahami bagaimana Google memilih judul dan cuplikan untuk hasil pencarian.
+
+## Tujuan belajar
+
+Setelah bab ini, kamu dapat:
+
+- membedakan title dokumen, heading terlihat, description, canonical, dan Open Graph;
+- menulis metadata unik serta akurat;
+- memahami sumber title link dan snippet Google;
+- memeriksa HTML awal dan preview berbagi;
+- menghindari janji bahwa Google pasti memakai teks yang kamu tulis.
+
+## Konsep inti
+
+### Lima elemen, lima pekerjaan
+
+| Elemen | Fungsi utama |
+|---|---|
+| `<title>` | Nama dokumen pada tab dan sinyal kuat untuk title link |
+| `<h1>` | Judul utama yang terlihat di halaman |
+| Meta description | Ringkasan kandidat untuk snippet |
+| Canonical | URL pilihan di antara halaman duplikat atau serupa |
+| Open Graph | Judul, deskripsi, dan gambar untuk preview berbagi |
+
+Google dapat membentuk title link dari `<title>`, judul visual, H1, `og:title`, teks menonjol, isi halaman, serta anchor text. Title yang kosong, usang, generik, berulang, atau tidak sesuai bahasa dapat disesuaikan.
+
+Snippet terutama dibuat dari isi halaman sesuai kueri. Meta description dipakai jika dianggap lebih akurat. Satu halaman dapat memiliki snippet berbeda untuk kueri berbeda.
+
+### Judul harus selaras, tidak harus identik
+
+Title dapat menyertakan nama situs, sedangkan H1 cukup menyebut topik. Contoh:
+
+```text
+<title>: Deploy Statis Next.js: Build dan Preview | Proyek Web
+<h1>:     Deploy statis Next.js
+```
+
+Keduanya konsisten. Hindari title seperti “SEO, SEO Next.js, Tutorial SEO Next.js Terbaik” karena tidak natural dan tidak membantu.
+
+## Praktik langkah demi langkah
+
+File `deploy-statis.html`:
+
+```html
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Deploy Statis Next.js: Build dan Preview | Proyek Web</title>
+    <meta
+      name="description"
+      content="Bangun ekspor statis Next.js, periksa folder keluaran, dan jalankan preview lokal sebelum deploy."
+    >
+    <link
+      rel="canonical"
+      href="https://seo.example.com/panduan/deploy-statis-nextjs/"
+    >
+
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:title" content="Deploy statis Next.js">
+    <meta
+      property="og:description"
+      content="Langkah build, pemeriksaan keluaran, dan preview lokal."
+    >
+    <meta
+      property="og:url"
+      content="https://seo.example.com/panduan/deploy-statis-nextjs/"
+    >
+    <meta
+      property="og:image"
+      content="https://seo.example.com/images/deploy-statis.png"
+    >
+  </head>
+  <body>
+    <main>
+      <h1>Deploy statis Next.js</h1>
+      <p>Bangun situs, periksa hasil ekspor, lalu jalankan preview lokal.</p>
+    </main>
+  </body>
+</html>
+```
+
+Implementasi App Router pada `app/panduan/deploy-statis-nextjs/page.tsx`:
+
+```tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Deploy Statis Next.js: Build dan Preview",
+  description:
+    "Bangun ekspor statis Next.js, periksa folder keluaran, dan jalankan preview lokal sebelum deploy.",
+  alternates: {
+    canonical: "/panduan/deploy-statis-nextjs/",
+  },
+  openGraph: {
+    type: "article",
+    locale: "id_ID",
+    title: "Deploy statis Next.js",
+    description: "Langkah build, pemeriksaan keluaran, dan preview lokal.",
+    url: "/panduan/deploy-statis-nextjs/",
+    images: ["/images/deploy-statis.png"],
+  },
+};
+
+export default function Page() {
+  return <main><h1>Deploy statis Next.js</h1></main>;
+}
+```
+
+`metadataBase` di root layout harus memakai domain produksi agar URL relatif menjadi absolut.
+
+## Verifikasi dan hasil yang diharapkan
+
+1. Buka View Source dan cari tepat satu `<title>` yang deskriptif.
+2. Pastikan H1 terlihat dan sesuai dengan topik title.
+3. Periksa meta description. Ringkasan harus unik dan sesuai isi, bukan daftar kata kunci.
+4. Pastikan canonical absolut menuju URL pilihan yang benar-benar dapat dibuka.
+5. Periksa `og:title`, `og:description`, `og:url`, dan gambar absolut.
+6. Uji preview melalui alat platform yang relevan setelah deploy.
+7. Setelah crawling ulang, amati hasil Search—tetapi jangan menganggap teks akan identik.
+
+Hasil yang diharapkan: HTML menyampaikan metadata yang konsisten, halaman memiliki judul visual jelas, dan preview sosial memiliki data cukup. Google masih dapat memilih title link atau snippet lain.
+
+## Kesalahan umum
+
+- Menyamakan H1 dengan `<title>` secara teknis.
+- Menggunakan title sama untuk seluruh halaman.
+- Menjejalkan kata kunci atau boilerplate panjang.
+- Menulis description yang tidak ada hubungannya dengan isi.
+- Menganggap description selalu menjadi snippet.
+- Mengarahkan canonical semua halaman ke landing page.
+- Menggunakan URL relatif untuk `og:image` tanpa `metadataBase`.
+- Mengubah metadata lalu berharap hasil Search berubah seketika; perubahan memerlukan crawling ulang.
+
+## Latihan
+
+Sebuah halaman berjudul “Dokumentasi” membahas sitemap XML untuk Next.js. Title, H1, description, dan canonical semuanya kosong. Tulis versi yang lebih jelas.
+
+<details>
+  <summary>Lihat jawaban</summary>
+
+Contoh: title `Sitemap XML di Next.js | Proyek Web`; H1 `Membuat sitemap XML di Next.js`; description `Buat sitemap dari katalog rute, gunakan URL kanonis absolut, lalu periksa hasil build.`; canonical `https://seo.example.com/panduan/sitemap-nextjs/`. Kata-kata dapat berbeda selama akurat dan konsisten.
+
+</details>
+
+## Rujukan
+
+- [Praktik terbaik untuk title link](https://developers.google.com/search/docs/appearance/title-link?hl=id)
+- [Mengontrol snippet](https://developers.google.com/search/docs/appearance/snippet?hl=id)
+- [Konsolidasi URL duplikat](https://developers.google.com/search/docs/crawling-indexing/canonicalization?hl=id)
